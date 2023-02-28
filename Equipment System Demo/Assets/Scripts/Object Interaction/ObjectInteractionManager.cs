@@ -42,5 +42,34 @@ public class ObjectInteractionManager : MonoBehaviour
                 }
             }
         }
+
+        if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.E))
+        {
+            var selection = selectionManager.GetSelection();
+            if (selection != null)
+            {
+                if (selection.ObjectType == ObjectType.EQUIPABLE)
+                {
+                    selection.Transform.SetParent(rightHand);
+                    selection.Transform.localPosition = Vector3.zero;
+                    selection.Transform.localRotation = Quaternion.identity;
+                    selection.Transform.GetComponent<IEquipable>().OnEquip();
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                Debug.Log(rightHand.childCount);
+                rightHand.GetChild(1).GetComponent<IEquipable>().OnUnequip();
+            }
+            else
+            {
+                leftHand.GetChild(1).GetComponent<IEquipable>().OnUnequip();
+            }
+        }
+
     }
 }
