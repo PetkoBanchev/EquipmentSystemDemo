@@ -29,4 +29,9 @@ public class SelectionManager : MonoBehaviour
         selectionResponse.OnSelect(currentSelection);
 
     }
+
+    public ISelectable GetSelection()
+    {
+        return currentSelection;
+    }
 }

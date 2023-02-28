@@ -10,18 +10,11 @@ public class TooltipSelectionResponse : MonoBehaviour, ISelectionResponse
     public void OnSelect(ISelectable _selection)
     {
         if (_selection != null)
-        {
-            // Show tooltip
             OnSelection?.Invoke(_selection.TooltipText);
-            Debug.Log("selected");
-        }
     }
     public void OnDeselect(ISelectable _selection)
     {
         if (_selection != null)
-        {
-            // Hide tooltip
             OnDeselection?.Invoke();
-        }
     }
 }
