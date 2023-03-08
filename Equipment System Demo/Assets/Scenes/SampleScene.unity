@@ -542,6 +542,7 @@ GameObject:
   - component: {fileID: 721298464}
   - component: {fileID: 721298463}
   - component: {fileID: 721298462}
+  - component: {fileID: 721298465}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -599,6 +600,75 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &721298465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 721298461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec3b4f23e0a0a584a938eb6f8bb0731a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1001 &737181102
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 945762237}
+    m_Modifications:
+    - target: {fileID: 167483165803159930, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_Name
+      value: GroundCheck
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.474
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
 --- !u!1 &796595431
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,7 +713,7 @@ GameObject:
   - component: {fileID: 907026307}
   - component: {fileID: 907026306}
   - component: {fileID: 907026305}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -740,7 +810,7 @@ GameObject:
   - component: {fileID: 912583730}
   - component: {fileID: 912583729}
   - component: {fileID: 912583728}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -912,6 +982,7 @@ Transform:
   m_Children:
   - {fileID: 963194228}
   - {fileID: 2123524637}
+  - {fileID: 996178296}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -930,6 +1001,7 @@ MonoBehaviour:
   characterController: {fileID: 945762236}
   speed: 5
   gravity: -9.2
+  jumpHeight: 3
 --- !u!114 &945762239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1094,6 +1166,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 750
   playerBody: {fileID: 945762237}
+--- !u!4 &996178296 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6968008233517672482, guid: 4179a4ea9938f49408ed639cc2b48092, type: 3}
+  m_PrefabInstance: {fileID: 737181102}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1311122930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1581,7 +1658,7 @@ GameObject:
   - component: {fileID: 1923715241}
   - component: {fileID: 1923715240}
   - component: {fileID: 1923715239}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

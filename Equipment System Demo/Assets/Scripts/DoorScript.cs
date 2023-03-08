@@ -13,18 +13,6 @@ public class DoorScript : MonoBehaviour, IInteractive
     public ObjectType ObjectType { get { return objectType; } }
     public Transform Transform { get { return transform; } }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void TriggerInteraction()
     {
         ToggleDoor();
