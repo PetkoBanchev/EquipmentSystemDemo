@@ -30,10 +30,10 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
             OnFire1?.Invoke();
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButtonDown(1))
             OnFire2?.Invoke();
 
         if (Input.GetMouseButtonUp(0))
