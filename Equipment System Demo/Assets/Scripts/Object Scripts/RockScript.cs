@@ -14,6 +14,8 @@ public class RockScript : MonoBehaviour, IEquipable
     private Vector3 localScale;
     private GroundCheck groundCheck;
 
+    private Hand hand;
+
 
     public EquipableType EquipableType { get { return equipableType; } }
     public string TooltipText { get { return tooltipText; } }
@@ -26,37 +28,80 @@ public class RockScript : MonoBehaviour, IEquipable
         localScale = transform.localScale;
     }
 
-
-
     public void OnEquip()
     {
+        DetermineHand();
+        ManageEvent(SubMode.SUBSCRIBING);
         if (rigidbody != null)
             Destroy(rigidbody);
-        InputManager.Instance.OnFire1 += ThrowRock;
     }
 
     public void OnUnequip()
     {
+        throwForce = 50f;
         StartCoroutine(Throw());
     }
 
     private IEnumerator Throw()
     {
+        ManageEvent(SubMode.UNSUBSCRIBING);
         transform.parent = null;
         rigidbody = transform.AddComponent<Rigidbody>();
-        InputManager.Instance.OnFire1 -= ThrowRock;
         rigidbody.AddForce(transform.forward * throwForce);
         while (!groundCheck.IsGrounded())
         {
             yield return new WaitForFixedUpdate();
         }
         rigidbody.freezeRotation = true;
-        Destroy(rigidbody, 1f);
+        Destroy(rigidbody);
         transform.localScale = localScale;
     }
 
     private void ThrowRock()
     {
+        throwForce = 500f;
         StartCoroutine(Throw());
+    }
+
+    private void ManageEvent(SubMode mode)
+    {
+        if (mode == SubMode.SUBSCRIBING)
+        {
+            if (hand == Hand.LEFT)
+            {
+                InputManager.Instance.OnFire1 += ThrowRock;
+                Debug.Log("Sub left");
+            }
+            else
+            {
+                InputManager.Instance.OnFire2 += ThrowRock;
+                Debug.Log("Sub right");
+            }
+        }
+        else
+        {
+            if (hand == Hand.LEFT)
+            {
+                InputManager.Instance.OnFire1 -= ThrowRock;
+                EquipmentManager.Instance.UnsubscribeHand(hand);
+                Debug.Log("Unsub left");
+            }
+            else
+            {
+                InputManager.Instance.OnFire2 -= ThrowRock;
+                EquipmentManager.Instance.UnsubscribeHand(hand);
+                Debug.Log("Unsub right");
+            }
+        }
+    }
+
+    private void DetermineHand()
+    {
+        if (transform.parent.parent.name == "Left Hand")
+            hand = Hand.LEFT;
+        else
+            hand = Hand.RIGHT;
+
+        Debug.Log(hand);
     }
 }

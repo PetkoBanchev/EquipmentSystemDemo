@@ -12,7 +12,6 @@ public class PlayerMovement : MonoBehaviour
     private GroundCheck groundCheck;
     private bool isGrounded;
 
-
     private void Awake()
     {
         groundCheck = GetComponentInChildren<GroundCheck>();

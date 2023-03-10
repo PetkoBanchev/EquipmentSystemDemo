@@ -25,7 +25,7 @@ public class FlashlightScript : MonoBehaviour, IEquipable
     private void Awake()
     {
         groundCheck = GetComponentInChildren<GroundCheck>();
-        localScale = transform.localScale;
+        localScale = transform.localScale; // Caching the local scale
     }
 
 
@@ -56,20 +56,16 @@ public class FlashlightScript : MonoBehaviour, IEquipable
         }
         rigidbody.freezeRotation = true;
         Destroy(rigidbody, 1f);
-        transform.localScale = localScale;
+        transform.localScale = localScale; // reseting to the original local scale to prevent distortion of the object
     }
 
     private void ToggleFlashlight()
     {
         if (isLightOn)
-        {
-            isLightOn = false;
             spotlight.SetActive(false);
-        }
         else
-        {
-            isLightOn = true;
             spotlight.SetActive(true);
-        }
+
+        isLightOn = !isLightOn;
     }
 }
