@@ -27,7 +27,7 @@ public class GunScript : MonoBehaviour, IEquipable
         get { return bulletCount; }
         set
         {
-            bulletCount = value;
+            bulletCount += value;
             SetGunSound();
             if (bulletCount > maxBullets)
                 bulletCount = maxBullets;
@@ -53,12 +53,14 @@ public class GunScript : MonoBehaviour, IEquipable
         DetermineHand();
         ManageEvent(SubMode.SUBSCRIBING);
         SetGunSound();
+        EquipmentManager.Instance.SetGun(this, hand);
     }
 
     public void OnUnequip()
     {
         transform.parent = null;
         ManageEvent(SubMode.UNSUBSCRIBING);
+        EquipmentManager.Instance.SetGun(null, hand);
         rigidbody = transform.AddComponent<Rigidbody>();
         StartCoroutine(Throw());
     }
@@ -135,7 +137,5 @@ public class GunScript : MonoBehaviour, IEquipable
             hand = Hand.LEFT;
         else
             hand = Hand.RIGHT;
-
-        Debug.Log(hand);
     }
 }

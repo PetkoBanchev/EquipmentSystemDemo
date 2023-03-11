@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,6 +12,7 @@ public class FlashlightScript : MonoBehaviour, IEquipable
 
     private Vector3 localScale;
     private GroundCheck groundCheck;
+    private Hand hand;
 
     private bool isLightOn = false;
     [SerializeField] private GameObject spotlight;
@@ -32,16 +32,17 @@ public class FlashlightScript : MonoBehaviour, IEquipable
 
     public void OnEquip()
     {
+        DetermineHand();
         if (rigidbody != null)
             Destroy(rigidbody);
-        InputManager.Instance.OnFire1 += ToggleFlashlight;
+        ManageEvent(SubMode.SUBSCRIBING);
     }
 
     public void OnUnequip()
     {
         transform.parent = null;
         rigidbody = transform.AddComponent<Rigidbody>();
-        InputManager.Instance.OnFire1 -= ToggleFlashlight;
+        ManageEvent(SubMode.UNSUBSCRIBING);
         if (isLightOn)
             ToggleFlashlight();
         StartCoroutine(Throw());
@@ -67,5 +68,45 @@ public class FlashlightScript : MonoBehaviour, IEquipable
             spotlight.SetActive(true);
 
         isLightOn = !isLightOn;
+    }
+
+    private void DetermineHand()
+    {
+        if (transform.parent.parent.name == "Left Hand")
+            hand = Hand.LEFT;
+        else
+            hand = Hand.RIGHT;
+    }
+
+    private void ManageEvent(SubMode mode)
+    {
+        if (mode == SubMode.SUBSCRIBING)
+        {
+            if (hand == Hand.LEFT)
+            {
+                InputManager.Instance.OnFire1 += ToggleFlashlight;
+                Debug.Log("Sub left");
+            }
+            else
+            {
+                InputManager.Instance.OnFire2 += ToggleFlashlight;
+                Debug.Log("Sub right");
+            }
+        }
+        else
+        {
+            if (hand == Hand.LEFT)
+            {
+                InputManager.Instance.OnFire1 -= ToggleFlashlight;
+                EquipmentManager.Instance.UnsubscribeHand(hand);
+                Debug.Log("Unsub left");
+            }
+            else
+            {
+                InputManager.Instance.OnFire2 -= ToggleFlashlight;
+                EquipmentManager.Instance.UnsubscribeHand(hand);
+                Debug.Log("Unsub right");
+            }
+        }
     }
 }

@@ -15,6 +15,9 @@ public class EquipmentManager : MonoBehaviour
     private bool isRightHandEquiped = false;
     private bool isHeadEquiped = false;
 
+    private IEquipable LeftHandGun;
+    private IEquipable RightHandGun;
+
     private static EquipmentManager instance;
     public static EquipmentManager Instance { get { return instance; } }
 
@@ -110,5 +113,21 @@ public class EquipmentManager : MonoBehaviour
             InputManager.Instance.OnRightHandUnequip -= UnequipRightHand;
             isRightHandEquiped = false;
         }
+    }
+
+    public IEquipable GetGun(Hand hand)
+    {
+        if (hand == Hand.LEFT)
+            return RightHandGun;
+        else
+            return LeftHandGun;
+    }
+
+    public void SetGun(IEquipable gun, Hand hand)
+    {
+        if (hand == Hand.LEFT)
+            LeftHandGun = gun;
+        else
+            RightHandGun = gun;
     }
 }
