@@ -16,6 +16,8 @@ public class GunScript : MonoBehaviour, IEquipable
 
     [SerializeField] private int bulletCount = 5;
     [SerializeField] private int maxBullets = 30;
+    private GunMode gunMode = GunMode.MANUAL;
+    private bool isAutomaticFireOn = false;
     private AudioSource gunSound;
     [SerializeField] private AudioClip gunshot;
     [SerializeField] private AudioClip emptyGun;
@@ -81,15 +83,35 @@ public class GunScript : MonoBehaviour, IEquipable
     private void FireGunManually()
     {
         if(bulletCount > 0)
-        {
-            bulletCount -= 1;
-        }
+            bulletCount--;
         else
-        {
             SetGunSound();
-        }
         gunSound.Play();
     }
+
+    private void FireGunAutomatically()
+    {
+        isAutomaticFireOn = true;
+        if (bulletCount > 0)
+            StartCoroutine(AutomaticFire());
+        else
+            SetGunSound();
+        gunSound.Play();
+    }
+
+    private IEnumerator AutomaticFire()
+    {
+        while (isAutomaticFireOn)
+        {
+            if (bulletCount > 0)
+                bulletCount--;
+            else
+                SetGunSound();
+            gunSound.Play();
+            yield return new WaitForSeconds(.1f);
+        }
+    }
+
 
     private void SetGunSound()
     {
@@ -103,6 +125,7 @@ public class GunScript : MonoBehaviour, IEquipable
     {
         if (mode == SubMode.SUBSCRIBING)
         {
+            InputManager.Instance.OnToggleGunMode += ToggleGunMode;
             if (hand == Hand.LEFT)
             {
                 InputManager.Instance.OnFire1 += FireGunManually;
@@ -116,6 +139,9 @@ public class GunScript : MonoBehaviour, IEquipable
         }
         else
         {
+            InputManager.Instance.OnToggleGunMode -= ToggleGunMode;
+            if (gunMode == GunMode.AUTOMATIC)
+                ToggleGunMode();
             if (hand == Hand.LEFT)
             {
                 InputManager.Instance.OnFire1 -= FireGunManually;
@@ -137,5 +163,56 @@ public class GunScript : MonoBehaviour, IEquipable
             hand = Hand.LEFT;
         else
             hand = Hand.RIGHT;
+    }
+
+    private void TurnOffAutomaticFire()
+    {
+        isAutomaticFireOn = false;
+    }
+
+    private void ToggleGunMode()
+    {
+        if (gunMode == GunMode.MANUAL)
+            gunMode = GunMode.AUTOMATIC;
+        else
+        {
+            gunMode = GunMode.MANUAL;
+            TurnOffAutomaticFire();
+        }
+        ChangeGunModeTo();
+    }
+
+    private void ChangeGunModeTo()
+    {
+        if(gunMode == GunMode.AUTOMATIC)
+        {
+            if (hand == Hand.LEFT)
+            {
+                InputManager.Instance.OnFire1 -= FireGunManually;
+                InputManager.Instance.OnFire1 += FireGunAutomatically;
+                InputManager.Instance.OnFire1Released += TurnOffAutomaticFire;
+            }
+            else
+            {
+                InputManager.Instance.OnFire2 -= FireGunManually;
+                InputManager.Instance.OnFire2 += FireGunAutomatically;
+                InputManager.Instance.OnFire2Released += TurnOffAutomaticFire;
+            }
+        }
+        else
+        {
+            if (hand == Hand.LEFT)
+            {
+                InputManager.Instance.OnFire1 -= FireGunAutomatically;
+                InputManager.Instance.OnFire1 += FireGunManually;
+                InputManager.Instance.OnFire1Released -= TurnOffAutomaticFire;
+            }
+            else
+            {
+                InputManager.Instance.OnFire2 -= FireGunAutomatically;
+                InputManager.Instance.OnFire2 += FireGunManually;
+                InputManager.Instance.OnFire2Released -= TurnOffAutomaticFire;
+            }
+        }
     }
 }
