@@ -13,7 +13,8 @@ public class InputManager : MonoBehaviour
     public event Action OnRightHandEquip; // Shift + E
     public event Action OnLeftHandUnequip; // Q
     public event Action OnRightHandUnequip; // Shift + Q
-    public event Action OnToggleGunMode;
+    public event Action OnHeadUnequip; // H
+    public event Action OnToggleGunMode; // T
 
     #region Singleton
     private static InputManager instance;
@@ -46,14 +47,17 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && !Input.GetKey(KeyCode.LeftShift))
             OnInteractWithObject?.Invoke();
 
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.E)) // Uses GetKey for the shift to prevent firing the OnInteractWithObject event
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.E)) 
             OnRightHandEquip?.Invoke();
 
         if (Input.GetKeyDown(KeyCode.Q) && !Input.GetKey(KeyCode.LeftShift))
             OnLeftHandUnequip?.Invoke();
 
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Q)) // Uses GetKey for the shift to prevent firing the OnLeftHandUnequip event
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Q)) 
             OnRightHandUnequip?.Invoke();
+
+        if (Input.GetKeyDown(KeyCode.H))
+            OnHeadUnequip?.Invoke();
 
         if (Input.GetKeyDown(KeyCode.T))
             OnToggleGunMode?.Invoke();

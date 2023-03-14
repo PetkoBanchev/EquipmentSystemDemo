@@ -48,11 +48,24 @@ public class EquipmentManager : MonoBehaviour
             }
             else if (selection.ObjectType == ObjectType.EQUIPABLE)
             {
-                if (isLeftHandEquiped)
-                    UnequipLeftHand();
-                EquipItem(selection.Transform, leftHand);
-                InputManager.Instance.OnLeftHandUnequip += UnequipLeftHand; // Subscribes to the unequip event only after an item is equiped
-                isLeftHandEquiped = true;
+                var equipable = selection.Transform.GetComponent<IEquipable>();
+
+                if (equipable.EquipableType == EquipableType.HAND) 
+                {
+                    if (isLeftHandEquiped)
+                        UnequipLeftHand();
+                    EquipItem(selection.Transform, leftHand);
+                    InputManager.Instance.OnLeftHandUnequip += UnequipLeftHand; // Subscribes to the unequip event only after an item is equiped
+                    isLeftHandEquiped = true;
+                }
+                else if (equipable.EquipableType == EquipableType.HEAD)
+                {
+                    if(isHeadEquiped) 
+                        UnequipHead();
+                    EquipItem(selection.Transform, head);
+                    InputManager.Instance.OnHeadUnequip += UnequipHead;
+                    isHeadEquiped = true;
+                }
             }
         }
     }
@@ -99,6 +112,8 @@ public class EquipmentManager : MonoBehaviour
     private void UnequipHead()
     {
         head.GetChild(1).GetComponent<IEquipable>().OnUnequip();
+        InputManager.Instance.OnHeadUnequip -= UnequipHead;
+        isHeadEquiped = false;
     }
 
     public void UnsubscribeHand(Hand _hand)
