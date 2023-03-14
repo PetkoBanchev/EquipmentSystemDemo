@@ -1,0 +1,26 @@
+Instructions
+Open EquipmentSystemDemo.exe in the Builds folder
+
+Controls
+
+Walk with WASD
+Jump with space
+
+Left click - Use item in left hand
+
+Right click - Use item in right hand
+
+E - equip Left hand / Interact with objects 
+
+Shift + E - equip Right hand
+
+Q - Unequip Left hand
+
+Shift + Q - Unequip Right hand
+
+H - Unequip head
+
+T - toggle gun mode
+
+C - toggle cursor visibility
+
