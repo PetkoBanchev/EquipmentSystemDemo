@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class AmmoScript : MonoBehaviour, IEquipable
 {
+    #region Private variables
     [SerializeField] private EquipableType equipableType = EquipableType.HAND;
     [SerializeField] private string tooltipText = "Press E to equip ammo clip";
     [SerializeField] private ObjectType objectType = ObjectType.EQUIPABLE;
@@ -17,18 +18,21 @@ public class AmmoScript : MonoBehaviour, IEquipable
     private AudioSource reloadSound;
 
     private Hand hand;
+    #endregion
 
+    #region Public properties
     public int BulletCount
     {
         get { return bulletCount; }
         set { bulletCount = value; }
     }
-
     public EquipableType EquipableType { get { return equipableType; } }
     public string TooltipText { get { return tooltipText; } }
     public ObjectType ObjectType { get { return objectType; } }
     public Transform Transform { get { return transform; } }
+    #endregion
 
+    #region Private methods
     private void Awake()
     {
         groundCheck = GetComponentInChildren<GroundCheck>();
@@ -36,23 +40,13 @@ public class AmmoScript : MonoBehaviour, IEquipable
         reloadSound = GetComponent<AudioSource>();
     }
 
-    public void OnEquip()
-    {
-        if (rigidbody != null)
-            Destroy(rigidbody);
-        DetermineHand();
-        ManageEvent(SubMode.SUBSCRIBING);
-    }
-
-    public void OnUnequip()
-    {
-        transform.parent = null;
-        ManageEvent(SubMode.UNSUBSCRIBING);
-        rigidbody = transform.AddComponent<Rigidbody>();
-        StartCoroutine(Throw());
-    }
-
-
+    /// <summary>
+    /// Unsubcribes from the event. Removes the object from the parent.
+    /// Adds a rigidbody to give it force to simulate the item being thrown.
+    /// Removes the rigidbody once it hits the ground.
+    /// Restores the original scale. (Could not figure out why the scale distortions happened.)
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator Throw()
     {
         rigidbody.AddForce(transform.forward * throwForce);
@@ -64,7 +58,12 @@ public class AmmoScript : MonoBehaviour, IEquipable
         Destroy(rigidbody, 1f);
         transform.localScale = localScale;
     }
-
+    /// <summary>
+    /// Reloads the gun and destroys the game object. 
+    /// A small the delay is used to make sure the reload sound is played fully.
+    /// </summary>
+    /// <param name="_gun"></param>
+    /// <returns></returns>
     private IEnumerator Reload(IEquipable _gun)
     {
         reloadSound.Play();
@@ -81,6 +80,10 @@ public class AmmoScript : MonoBehaviour, IEquipable
             StartCoroutine(Reload(gun));
     }
 
+    /// <summary>
+    /// Subscribes or unsubscribes to respective events depending in which hand the object is equiped.
+    /// </summary>
+    /// <param name="mode"></param>
     private void ManageEvent(SubMode mode)
     {
         if (mode == SubMode.SUBSCRIBING)
@@ -88,12 +91,10 @@ public class AmmoScript : MonoBehaviour, IEquipable
             if (hand == Hand.LEFT)
             {
                 InputManager.Instance.OnFire1 += ReloadGun;
-                Debug.Log("Sub left");
             }
             else
             {
                 InputManager.Instance.OnFire2 += ReloadGun;
-                Debug.Log("Sub right");
             }
         }
         else
@@ -102,17 +103,18 @@ public class AmmoScript : MonoBehaviour, IEquipable
             {
                 InputManager.Instance.OnFire1 -= ReloadGun;
                 EquipmentManager.Instance.UnsubscribeHand(hand);
-                Debug.Log("Unsub left");
             }
             else
             {
                 InputManager.Instance.OnFire2 -= ReloadGun;
                 EquipmentManager.Instance.UnsubscribeHand(hand);
-                Debug.Log("Unsub right");
             }
         }
     }
 
+    /// <summary>
+    /// Determines in which hand the object is equiped
+    /// </summary>
     private void DetermineHand()
     {
         if (transform.parent.parent.name == "Left Hand")
@@ -120,4 +122,23 @@ public class AmmoScript : MonoBehaviour, IEquipable
         else
             hand = Hand.RIGHT;
     }
+    #endregion
+
+    #region Public methods
+    public void OnEquip()
+    {
+        if (rigidbody != null)
+            Destroy(rigidbody);
+        DetermineHand();
+        ManageEvent(SubMode.SUBSCRIBING);
+    }
+
+    public void OnUnequip()
+    {
+        transform.parent = null;
+        ManageEvent(SubMode.UNSUBSCRIBING);
+        rigidbody = transform.AddComponent<Rigidbody>();
+        StartCoroutine(Throw());
+    }
+    #endregion
 }

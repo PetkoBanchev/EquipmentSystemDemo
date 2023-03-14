@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipableType: 1
-  tooltipText: Press E to equip rock
+  tooltipText: Press E / Shift + E to equip rock
   objectType: 2
   rigidbody: {fileID: 0}
   throwForce: 500

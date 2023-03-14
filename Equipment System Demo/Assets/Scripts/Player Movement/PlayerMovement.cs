@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-
+    #region Private variables
     [SerializeField] private CharacterController characterController;
     [SerializeField] private float speed = 5f;
     [SerializeField] private float gravity = -9.2f;
@@ -11,7 +11,9 @@ public class PlayerMovement : MonoBehaviour
 
     private GroundCheck groundCheck;
     private bool isGrounded;
+    #endregion
 
+    #region Private methods
     private void Awake()
     {
         groundCheck = GetComponentInChildren<GroundCheck>();
@@ -38,4 +40,5 @@ public class PlayerMovement : MonoBehaviour
 
         characterController.Move(velocity * Time.deltaTime);
     }
+    #endregion
 }

@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EquipmentManager : MonoBehaviour
 {
+    #region Private variables
     private SelectionManager selectionManager;
 
     [SerializeField] private Transform leftHand;
@@ -17,10 +15,14 @@ public class EquipmentManager : MonoBehaviour
 
     private IEquipable LeftHandGun;
     private IEquipable RightHandGun;
+    #endregion
 
+    #region Singleton
     private static EquipmentManager instance;
     public static EquipmentManager Instance { get { return instance; } }
+    #endregion
 
+    #region Private methods
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -37,6 +39,11 @@ public class EquipmentManager : MonoBehaviour
         InputManager.Instance.OnRightHandEquip += EquipRightHand;
     }
 
+    /// <summary>
+    /// Triggered by the OnInteractWithObject event (The E key)
+    /// Determines the type of object. If it's interactive it triggers the interaction.
+    /// If it's equipable it equips in the appropriate place and subscribes it to the proper unequip event.
+    /// </summary>
     private void InteractWithObject()
     {
         var selection = selectionManager.GetSelection();
@@ -70,6 +77,10 @@ public class EquipmentManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Triggered by the OnRightHandEquip event (Shift + E)
+    /// Equips the object to the right hand and subscribes it to the unequip event.
+    /// </summary>
     private void EquipRightHand()
     {
         var selection = selectionManager.GetSelection();
@@ -77,6 +88,8 @@ public class EquipmentManager : MonoBehaviour
         {
             if (selection.ObjectType == ObjectType.EQUIPABLE)
             {
+                if (selection.Transform.GetComponent<IEquipable>().EquipableType == EquipableType.HEAD) // Prevents head objects being equipped to the right hand
+                    return;
                 if (isRightHandEquiped)
                     UnequipRightHand();
                 EquipItem(selection.Transform, rightHand);
@@ -86,7 +99,12 @@ public class EquipmentManager : MonoBehaviour
         }
     }
 
-    // Helper method
+    /// <summary>
+    /// Helper method to set the correct parent of the equiped item
+    /// And reset its transform
+    /// </summary>
+    /// <param name="itemTransform"></param>
+    /// <param name="parentTransform"></param>
     private void EquipItem(Transform itemTransform, Transform parentTransform)
     {
         itemTransform.SetParent(parentTransform);
@@ -95,6 +113,9 @@ public class EquipmentManager : MonoBehaviour
         itemTransform.GetComponent<IEquipable>().OnEquip();
     }
 
+    /// <summary>
+    /// Unequips the left hand and unsubscribes from the unequip event
+    /// </summary>
     private void UnequipLeftHand()
     {
         leftHand.GetChild(1).GetComponent<IEquipable>().OnUnequip();
@@ -102,6 +123,9 @@ public class EquipmentManager : MonoBehaviour
         isLeftHandEquiped = false;
     }
 
+    /// <summary>
+    /// Unequips the right hand and unsubscribes from the unequip event
+    /// </summary>
     private void UnequipRightHand()
     {
         rightHand.GetChild(1).GetComponent<IEquipable>().OnUnequip();
@@ -109,6 +133,9 @@ public class EquipmentManager : MonoBehaviour
         isRightHandEquiped = false;
     }
 
+    /// <summary>
+    /// Unequips the head and unsubscribes from the unequip event
+    /// </summary>
     private void UnequipHead()
     {
         head.GetChild(1).GetComponent<IEquipable>().OnUnequip();
@@ -116,6 +143,14 @@ public class EquipmentManager : MonoBehaviour
         isHeadEquiped = false;
     }
 
+    #endregion
+
+    #region Public methods
+    /// <summary>
+    /// Public method to help unsubcribe a given hand remotely.
+    /// This is applicable to single use items. (Rock, ammo clip, etc.)
+    /// </summary>
+    /// <param name="_hand"></param>
     public void UnsubscribeHand(Hand _hand)
     {
         if(_hand == Hand.LEFT)
@@ -130,6 +165,13 @@ public class EquipmentManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns a referrence to the gun in the opposite hand of the ammo holding hand. (If the ammo is in the left hand it returns a referrence to the gun in the right hand) 
+    /// If the hand doesn't have a gun equiped it returns null.
+    /// This is used for the ammo clip
+    /// </summary>
+    /// <param name="hand"></param>
+    /// <returns></returns>
     public IEquipable GetGun(Hand hand)
     {
         if (hand == Hand.LEFT)
@@ -138,6 +180,13 @@ public class EquipmentManager : MonoBehaviour
             return LeftHandGun;
     }
 
+    /// <summary>
+    /// Caches a referrence to the gun in the selected hand.
+    /// On unequip it nullifies the referrence.
+    /// This is also used for the ammo clip
+    /// </summary>
+    /// <param name="gun"></param>
+    /// <param name="hand"></param>
     public void SetGun(IEquipable gun, Hand hand)
     {
         if (hand == Hand.LEFT)
@@ -145,4 +194,6 @@ public class EquipmentManager : MonoBehaviour
         else
             RightHandGun = gun;
     }
+
+    #endregion
 }

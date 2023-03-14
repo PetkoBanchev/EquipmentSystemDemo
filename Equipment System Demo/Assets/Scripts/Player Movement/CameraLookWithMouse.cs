@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class CameraLookWithMouse : MonoBehaviour
 {
+    #region Private variables
     [SerializeField] private float mouseSensitivity = 100f;
-
     [SerializeField] private Transform playerBody;
 
     private float xRotation = 0f;
-
     private bool isCursorVisible = false;
+    #endregion
+
+    #region Private methods
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -39,4 +41,5 @@ public class CameraLookWithMouse : MonoBehaviour
             Cursor.visible = true;
         isCursorVisible = !isCursorVisible;
     }
+    #endregion
 }

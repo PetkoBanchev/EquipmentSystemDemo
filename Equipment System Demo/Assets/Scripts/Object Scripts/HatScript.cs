@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class HatScript : MonoBehaviour, IEquipable
 {
+    #region Private variables
     [SerializeField] private EquipableType equipableType = EquipableType.HEAD;
     [SerializeField] private string tooltipText = "Press E to equip hat";
     [SerializeField] private ObjectType objectType = ObjectType.EQUIPABLE;
@@ -12,30 +13,29 @@ public class HatScript : MonoBehaviour, IEquipable
 
     private Vector3 localScale;
     private GroundCheck groundCheck;
+    #endregion
 
+    #region Public properties
     public EquipableType EquipableType { get { return equipableType; } }
     public string TooltipText { get { return tooltipText; } }
     public ObjectType ObjectType { get { return objectType; } }
     public Transform Transform { get { return transform; } }
+    #endregion
 
+    #region Private methods
     private void Awake()
     {
         groundCheck = GetComponentInChildren<GroundCheck>();
         localScale = transform.localScale;
     }
 
-    public void OnEquip()
-    {
-        if (rigidbody != null)
-            Destroy(rigidbody);
-    }
-
-    public void OnUnequip()
-    {
-        throwForce = 50f;
-        StartCoroutine(Throw());
-    }
-
+    /// <summary>
+    /// Unsubcribes from the event. Removes the object from the parent.
+    /// Adds a rigidbody to give it force to simulate the item being thrown.
+    /// Removes the rigidbody once it hits the ground.
+    /// Restores the original scale. (Could not figure out why the scale distortions happened.)
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator Throw()
     {
         transform.parent = null;
@@ -49,5 +49,19 @@ public class HatScript : MonoBehaviour, IEquipable
         Destroy(rigidbody);
         transform.localScale = localScale;
     }
-    
+    #endregion
+
+    #region Public methods
+    public void OnEquip()
+    {
+        if (rigidbody != null)
+            Destroy(rigidbody);
+    }
+
+    public void OnUnequip()
+    {
+        throwForce = 50f;
+        StartCoroutine(Throw());
+    }
+    #endregion
 }

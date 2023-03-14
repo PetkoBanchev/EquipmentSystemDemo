@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equipableType: 1
-  tooltipText: Press E to equip ammo clip
+  tooltipText: Press E / Shift + E to equip ammo clip
   objectType: 2
   rigidbody: {fileID: 0}
   throwForce: 100

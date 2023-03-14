@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class GunScript : MonoBehaviour, IEquipable
 {
+    #region Private variables
     [SerializeField] private EquipableType equipableType = EquipableType.HAND;
     [SerializeField] private string tooltipText = "Press E to equip gun";
     [SerializeField] private ObjectType objectType = ObjectType.EQUIPABLE;
@@ -13,16 +14,17 @@ public class GunScript : MonoBehaviour, IEquipable
     private Vector3 localScale;
     private GroundCheck groundCheck;
 
-    [SerializeField] private int bulletCount = 5;
-    [SerializeField] private int maxBullets = 30;
+    [SerializeField, Range(0, 30)] private int bulletCount = 5;
+    [SerializeField, Range(0, 30)] private int maxBullets = 30;
     private GunMode gunMode = GunMode.MANUAL;
     private bool isAutomaticFireOn = false;
     private AudioSource gunSound;
     [SerializeField] private AudioClip gunshot;
     [SerializeField] private AudioClip emptyGun;
-
     private Hand hand;
+    #endregion
 
+    #region Public properties
     public int BulletCount
     {
         get { return bulletCount; }
@@ -34,11 +36,13 @@ public class GunScript : MonoBehaviour, IEquipable
                 bulletCount = maxBullets;
         }
     }
-
     public EquipableType EquipableType { get { return equipableType; } }
     public string TooltipText { get { return tooltipText; } }
     public ObjectType ObjectType { get { return objectType; } }
     public Transform Transform { get { return transform; } }
+    #endregion
+
+    #region Private methods
 
     private void Awake()
     {
@@ -47,26 +51,13 @@ public class GunScript : MonoBehaviour, IEquipable
         gunSound = GetComponent<AudioSource>();
     }
 
-    public void OnEquip()
-    {
-        if(rigidbody != null)
-            Destroy(rigidbody);
-        DetermineHand();
-        ManageEvent(SubMode.SUBSCRIBING);
-        SetGunSound();
-        EquipmentManager.Instance.SetGun(this, hand);
-    }
-
-    public void OnUnequip()
-    {
-        transform.parent = null;
-        ManageEvent(SubMode.UNSUBSCRIBING);
-        EquipmentManager.Instance.SetGun(null, hand);
-        rigidbody = transform.AddComponent<Rigidbody>();
-        StartCoroutine(Throw());
-    }
-
-
+    /// <summary>
+    /// Unsubcribes from the event. Removes the object from the parent.
+    /// Adds a rigidbody to give it force to simulate the item being thrown.
+    /// Removes the rigidbody once it hits the ground.
+    /// Restores the original scale. (Could not figure out why the scale distortions happened.)
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator Throw()
     {
         rigidbody.AddForce(transform.forward * throwForce);
@@ -88,6 +79,9 @@ public class GunScript : MonoBehaviour, IEquipable
         gunSound.Play();
     }
 
+    /// <summary>
+    /// Triggers the automatic fire if there is at least 1 bullet in the gun.
+    /// </summary>
     private void FireGunAutomatically()
     {
         isAutomaticFireOn = true;
@@ -98,6 +92,11 @@ public class GunScript : MonoBehaviour, IEquipable
         gunSound.Play();
     }
 
+    /// <summary>
+    /// Fires the gun automatically. Used a coroutine to add delay between the shots.
+    /// Check the summary of TurnOffAutomaticFire for more info
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator AutomaticFire()
     {
         while (isAutomaticFireOn)
@@ -110,8 +109,10 @@ public class GunScript : MonoBehaviour, IEquipable
             yield return new WaitForSeconds(.1f);
         }
     }
-
-
+    
+    /// <summary>
+    /// Changes the sound to an empty clip when the bullets deplete
+    /// </summary>
     private void SetGunSound()
     {
         if (bulletCount > 0)
@@ -120,6 +121,10 @@ public class GunScript : MonoBehaviour, IEquipable
             gunSound.clip = emptyGun;
     }
 
+    /// <summary>
+    /// Subscribes or unsubscribes to respective events depending in which hand the object is equiped.
+    /// </summary>
+    /// <param name="mode"></param>
     private void ManageEvent(SubMode mode)
     {
         if (mode == SubMode.SUBSCRIBING)
@@ -148,6 +153,9 @@ public class GunScript : MonoBehaviour, IEquipable
         }
     }
 
+    /// <summary>
+    /// Determines in which hand the object is equiped
+    /// </summary>
     private void DetermineHand()
     {
         if (transform.parent.parent.name == "Left Hand")
@@ -156,6 +164,11 @@ public class GunScript : MonoBehaviour, IEquipable
             hand = Hand.RIGHT;
     }
 
+    /// <summary>
+    /// This is subscribed to the OnFire1Released or OnFire2Released event based on the hand in which the gun is equiped.
+    /// The events are fired when the respective mouse button is released. The the boolean is set to false.
+    /// This in turn breaks the while loop in the AutomaticFire coroutine.
+    /// </summary>
     private void TurnOffAutomaticFire()
     {
         isAutomaticFireOn = false;
@@ -173,6 +186,9 @@ public class GunScript : MonoBehaviour, IEquipable
         ChangeGunModeTo();
     }
 
+    /// <summary>
+    /// Subscribes and unsubcribes from the respective events based on the gun mode and the hand in which the gun is equiped.
+    /// </summary>
     private void ChangeGunModeTo()
     {
         if(gunMode == GunMode.AUTOMATIC)
@@ -206,4 +222,27 @@ public class GunScript : MonoBehaviour, IEquipable
             }
         }
     }
+    #endregion
+
+    #region Public methods
+    public void OnEquip()
+    {
+        if(rigidbody != null)
+            Destroy(rigidbody);
+        DetermineHand();
+        ManageEvent(SubMode.SUBSCRIBING);
+        SetGunSound();
+        EquipmentManager.Instance.SetGun(this, hand); // Sends a referrence, so the ammo clip can reload this gun.
+    }
+
+    public void OnUnequip()
+    {
+        transform.parent = null;
+        ManageEvent(SubMode.UNSUBSCRIBING);
+        EquipmentManager.Instance.SetGun(null, hand); // Sends a null referrence, so the ammo clip is unusable when there is no gun equipped.
+        rigidbody = transform.AddComponent<Rigidbody>();
+        StartCoroutine(Throw());
+    }
+    #endregion
+
 }
