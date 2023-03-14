@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -127,15 +126,9 @@ public class GunScript : MonoBehaviour, IEquipable
         {
             InputManager.Instance.OnToggleGunMode += ToggleGunMode;
             if (hand == Hand.LEFT)
-            {
                 InputManager.Instance.OnFire1 += FireGunManually;
-                Debug.Log("Sub left");
-            }
             else
-            {
                 InputManager.Instance.OnFire2 += FireGunManually;
-                Debug.Log("Sub right");
-            }
         }
         else
         {
@@ -146,13 +139,11 @@ public class GunScript : MonoBehaviour, IEquipable
             {
                 InputManager.Instance.OnFire1 -= FireGunManually;
                 EquipmentManager.Instance.UnsubscribeHand(hand);
-                Debug.Log("Unsub left");
             }
             else
             {
                 InputManager.Instance.OnFire2 -= FireGunManually;
                 EquipmentManager.Instance.UnsubscribeHand(hand);
-                Debug.Log("Unsub right");
             }
         }
     }

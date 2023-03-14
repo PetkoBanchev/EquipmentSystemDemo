@@ -10,7 +10,7 @@ public class CameraLookWithMouse : MonoBehaviour
 
     private float xRotation = 0f;
 
-    // Start is called before the first frame update
+    private bool isCursorVisible = false;
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -27,5 +27,16 @@ public class CameraLookWithMouse : MonoBehaviour
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         playerBody.Rotate(Vector3.up * mouseX);
         
+        if(Input.GetKeyDown(KeyCode.C))
+            ToggleCursor();
+    }
+
+    private void ToggleCursor()
+    {
+        if (isCursorVisible)
+            Cursor.visible = false;
+        else
+            Cursor.visible = true;
+        isCursorVisible = !isCursorVisible;
     }
 }

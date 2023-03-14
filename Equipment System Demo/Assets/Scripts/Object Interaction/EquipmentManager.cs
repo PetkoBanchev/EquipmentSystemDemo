@@ -63,7 +63,7 @@ public class EquipmentManager : MonoBehaviour
                     if(isHeadEquiped) 
                         UnequipHead();
                     EquipItem(selection.Transform, head);
-                    InputManager.Instance.OnHeadUnequip += UnequipHead;
+                    InputManager.Instance.OnHeadUnequip += UnequipHead; // Subscribes to the unequip event only after an item is equiped
                     isHeadEquiped = true;
                 }
             }

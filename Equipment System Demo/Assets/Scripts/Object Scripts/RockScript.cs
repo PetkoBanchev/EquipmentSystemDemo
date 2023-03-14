@@ -67,15 +67,9 @@ public class RockScript : MonoBehaviour, IEquipable
         if (mode == SubMode.SUBSCRIBING)
         {
             if (hand == Hand.LEFT)
-            {
                 InputManager.Instance.OnFire1 += ThrowRock;
-                Debug.Log("Sub left");
-            }
             else
-            {
                 InputManager.Instance.OnFire2 += ThrowRock;
-                Debug.Log("Sub right");
-            }
         }
         else
         {
@@ -83,13 +77,11 @@ public class RockScript : MonoBehaviour, IEquipable
             {
                 InputManager.Instance.OnFire1 -= ThrowRock;
                 EquipmentManager.Instance.UnsubscribeHand(hand);
-                Debug.Log("Unsub left");
             }
             else
             {
                 InputManager.Instance.OnFire2 -= ThrowRock;
                 EquipmentManager.Instance.UnsubscribeHand(hand);
-                Debug.Log("Unsub right");
             }
         }
     }
